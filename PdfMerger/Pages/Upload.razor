@@ -3,30 +3,35 @@
 @inject IJSRuntime JS
 
 <div class="mb-2 mt-2">
-    <InputFile OnChange="HandleSelectedFiles" accept=".pdf" multiple />
+    <InputFile class="form-control" OnChange="HandleSelectedFiles" accept=".pdf" multiple />
 </div>
 
 <div class="mt-3">
-<table class="table">
-    <thead>
-        <tr>
-            <th>Dateiname</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var file in uploadedFiles)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>@file.FileName</td>
-                <td>
-                    <button class="btn btn-secondary" @onclick="() => RemoveFile(file)">Entfernen</button>
-                </td>
+                <th>File name</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < uploadedFiles.Count; i++)
+            {
+                int index = i;
+                <tr>
+                    <td class="td">@uploadedFiles[i].FileName</td>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="() => MoveToTop(index)" disabled="@(index == 0)">Top</button>
+                        <button class="btn btn-secondary" @onclick="() => MoveUp(index)" disabled="@(index == 0)">Up</button>
+                        <button class="btn btn-secondary" @onclick="() => MoveToBottom(index)" disabled="@(index == uploadedFiles.Count - 1)">Bottom</button>
+                        <button class="btn btn-secondary" @onclick="() => MoveDown(index)" disabled="@(index == uploadedFiles.Count - 1)">Down</button>
+                        <button class="btn btn-danger" @onclick="() => RemoveFile(uploadedFiles[index])">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
-<button class="btn btn-primary" @onclick="MergePDFs">PDFs Zusammenführen</button>
-<button class="btn btn-danger" @onclick="RemoveAll">Alle Entfernen</button>
+<button class="btn btn-primary" @onclick="MergePDFs">Merge</button>
+<button class="btn btn-danger" @onclick="RemoveAll">Remove all</button>

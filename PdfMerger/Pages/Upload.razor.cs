@@ -34,7 +34,7 @@ public partial class Upload
 
     private async Task MergePDFs()
     {
-        if (uploadedFiles.Count < 2 || uploadedFiles == null)
+        if (uploadedFiles.Count < 2)
         {
             return;
         }
@@ -59,5 +59,52 @@ public partial class Upload
         var fileName = $"Merged_{DateTime.Now:yyyyMMddHHmmss}.pdf";
 
         await JS.InvokeVoidAsync("FileUtil.saveAs", fileName, fileBytes);
+    }
+    private void MoveUp(int index)
+    {
+        if (index <= 0 || index >= uploadedFiles.Count)
+        {
+            return;
+        }
+
+        var file = uploadedFiles[index];
+        uploadedFiles.RemoveAt(index);
+        uploadedFiles.Insert(index - 1, file);
+    }
+
+    private void MoveDown(int index)
+    {
+        if (index < 0 || index >= uploadedFiles.Count - 1)
+        {
+            return;
+        }
+
+        var file = uploadedFiles[index];
+        uploadedFiles.RemoveAt(index);
+        uploadedFiles.Insert(index + 1, file);
+    }
+
+    private void MoveToTop(int index)
+    {
+        if (index <= 0 || index >= uploadedFiles.Count)
+        {
+            return;
+        }
+
+        var file = uploadedFiles[index];
+        uploadedFiles.RemoveAt(index);
+        uploadedFiles.Insert(0, file);
+    }
+
+    private void MoveToBottom(int index)
+    {
+        if (index < 0 || index >= uploadedFiles.Count)
+        {
+            return;
+        }
+
+        var file = uploadedFiles[index];
+        uploadedFiles.RemoveAt(index);
+        uploadedFiles.Add(file);
     }
 }
