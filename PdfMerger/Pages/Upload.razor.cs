@@ -10,6 +10,10 @@ public partial class Upload
 {
     private readonly List<UploadedFile> uploadedFiles = new();
 
+    private byte[]? previewFileContent;
+
+    private int? previewFileIndex;
+
     private async Task HandleSelectedFiles(InputFileChangeEventArgs e)
     {
         foreach (var file in e.GetMultipleFiles())
@@ -106,5 +110,31 @@ public partial class Upload
         var file = uploadedFiles[index];
         uploadedFiles.RemoveAt(index);
         uploadedFiles.Add(file);
+    }
+
+    private void TogglePreview(int index)
+    {
+        if (previewFileContent != null && previewFileIndex == index)
+        {
+            // close preview
+            previewFileContent = null;
+            previewFileIndex = null;
+        }
+        else
+        {
+            // open preview
+            previewFileContent = uploadedFiles[index].FileContent;
+            previewFileIndex = index;
+        }
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (previewFileContent != null)
+        {
+            await JS.InvokeVoidAsync("PdfViewer.showPdf", previewFileContent, "pdf-canvas");
+        }
     }
 }
